@@ -38,7 +38,7 @@ mongo.connect(
             console.error(err)
             return
         }
-        db = client.db('restaurants');
+        db = results.db('restaurants');
         restaurants = db.collections('restaurants');
     }
 );
