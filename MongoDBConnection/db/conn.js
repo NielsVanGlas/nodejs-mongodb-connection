@@ -18,7 +18,7 @@ module.exports = {
     });
     },
 
-    getDb: ()=>{
+    detDb: ()=>{
         return dbConnection;       
     },
 };
