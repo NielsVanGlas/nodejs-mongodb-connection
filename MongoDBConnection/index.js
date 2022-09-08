@@ -1,49 +1,32 @@
-const express = require('express');
-const mongo = require('mongodb').MongoClient;
+// Loads the configuration from config.env to process.env
+require('dotenv').config({path: './conf.env'});
 
-const app = express();
+const express = require('express')
+const cors = require('cors');
+// get MongoDBdriver connection
+const dbo = require('./db/conn');
 
-const port = 3000;
-const url = 'mongodb://localhost:27017';
+const PORT = process.env.PORT || 5000;
+const app = express()
 
-// create
-app.post('/', (req, res)=>{
-    restaurants.insertOne({'URL': req.body.URL, 'address': req.body.address, 
-    'address line 2': req.body.address line 2, 'name': req.body.name, 'outcode': req.body.outcode, 
-     'postcode': req.body.postcode, 'rating': req.body.rating, 'type_of_food': req.body.type_of_food});
+app.use(cors());
+app.use(express.json());
+app.use(require('./routes/record'));
+
+// Global error handling
+app.use((err, _req, res)=>{
+    console.error(err.stack);
+    res.status(500).send('Somethig broke!');
 });
 
-// Read
-app.get('/', (req, res)=>{
-    
-});
-
-// Update
-app.put('/', (req, res)=>{
-    
-});
-
-// Delete5
-app.delete('/', (req, res)=>{
-    
-});
-
-// connect to db
-let db;
-let restaurants;
-
-mongo.connect(
-    url, {useNewUrlParser: true, useUnifiedTopology: true}, (err, results)=>{
-        if(err){
-            console.error(err)
-            return
-        }
-        db = results.db('restaurants');
-        restaurants = db.collections('restaurants');
+// perform a database connection when the server start
+dbo.connectToServer((err)=>{
+    if(err){
+        console.error(err);
+        process.exit();
     }
-);
-
-// server listener
-app.listen(port, ()=>{
-    console.log(`App listening at http://localhost:${port}`);
+    // Start the Express server
+    app.listen(PORT, () => {
+        console.log(`Example app listening on port ${PORT}!`)
+    });
 });
