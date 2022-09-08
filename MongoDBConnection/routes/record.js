@@ -30,7 +30,7 @@ recordRoutes.route('/listings/recordSwipe').post((req, res)=>{
                         'name': req.body.name, 'outcode': req.body.outcode, 
                         'postcode': req.body.postcode, 'rating': req.body.rating, 'type_of_food': req.body.type_of_food};
     
-    dbConnect.collection('matches').insertOne(matchDocument, (err, result)=>{
+    dbConnect.collection('restaurant').insertOne(matchDocument, (err, result)=>{
         if(err){
             res.status(400).send('Error inserting matches!');
         } else {
@@ -47,7 +47,7 @@ recordRoutes.route('/listings/updateLike').post((req, res)=>{
     const restaurantQuery = { 'id': req.body.id};
     const updates = {'rating': req.body.rating    }; 
 
-    dbConnect.collection('restaurants').updateOne(restaurantQuery, updates, (err, result)=>{
+    dbConnect.collection('restaurant').updateOne(restaurantQuery, updates, (err, result)=>{
         if(err){
             res.status(400).send(`Error updating likes on restaurant with id ${restaurantQuery.id}!`);
         } else{
@@ -63,7 +63,7 @@ recordRoutes.route('/listings/recordDelete').post((req, res)=>{
     const dbConnect = dbo.getDb();
     const restaurantQuery = {'restaurant_id': req.body.id};
 
-    dbConnect('restaurants').deleteOne(restaurantQuery, (err, result)=>{
+    dbConnect('restaurant').deleteOne(restaurantQuery, (err, result)=>{
         if(err){
             restaurantQuery.status(400).send(`Error deleting listing with id ${restaurantQuery.restaurant_id}!`);
         } else {
