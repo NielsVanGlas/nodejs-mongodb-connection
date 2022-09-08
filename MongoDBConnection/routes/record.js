@@ -1,4 +1,5 @@
 const express = require('express');
+const ObjectId = require('mongodb').ObjectId; 
 
 // recordRoutes is an interface of the express router.
 // We use it to define our router
@@ -9,7 +10,7 @@ const recordRoutes = express.Router();
 const dbo = require('../db/conn');
 
 // This section will help you get a list of all the records
-recordRoutes.route('/listings').get(async (req, res)=>{
+recordRoutes.route('/restaurants').get(async (req, res)=>{
     // Get records
     const dbConnect = dbo.getDb();
 
@@ -23,16 +24,16 @@ recordRoutes.route('/listings').get(async (req, res)=>{
 });
 
 // This section will help you create a new record
-recordRoutes.route('/listings/recordSwipe').post((req, res)=>{
+recordRoutes.route('/restaurants/recordSwipe').post((req, res)=>{
     // Insert swipe information
     const dbConnect = dbo.getDb();
-    const matchDocument = {'restaurant_id' : req.body.id, 'URL': req.body.URL, 'address': req.body.address,
-                        'name': req.body.name, 'outcode': req.body.outcode, 
+    const restaurantDocument = {'URL': req.body.URL, 'address': req.body.address,
+                        'name': req.body.name, 'outcode': req.body.outcode, 'raddress line 2' : req.body.address2, 
                         'postcode': req.body.postcode, 'rating': req.body.rating, 'type_of_food': req.body.type_of_food};
     
-    dbConnect.collection('matches').insertOne(matchDocument, (err, result)=>{
+    dbConnect.collection('restaurant').insertOne(restaurantDocument, (err, result)=>{
         if(err){
-            res.status(400).send('Error inserting matches!');
+            res.status(400).send('Error inserting restaurnat!');
         } else {
             console.log(`Added a mew match with id ${result.insertedId}`);
             res.status(204).send();
@@ -41,33 +42,41 @@ recordRoutes.route('/listings/recordSwipe').post((req, res)=>{
 });
 
 // This section will help you update a record by id
-recordRoutes.route('/listings/updateLike').post((req, res)=>{
+recordRoutes.route('/restaurants/updateLike').put((req, res)=>{
     // Update likes
     const dbConnect = dbo.getDb();
-    const restaurantQuery = { 'id': req.body.id};
-    const updates = {'rating': req.body.rating    }; 
+    const mongoObjId = new ObjectId(req.body.id);
+    const restaurantQuery = {'_id': mongoObjId};
+    const updates = {$set: {'rating': req.body.rating}}; 
 
-    dbConnect.collection('restaurants').updateOne(restaurantQuery, updates, (err, result)=>{
+    dbConnect.collection('restaurant').updateOne(restaurantQuery, updates, (err, result)=>{
+        console.log(restaurantQuery)
         if(err){
             res.status(400).send(`Error updating likes on restaurant with id ${restaurantQuery.id}!`);
         } else{
-            console.log('1 document updated!');
+            // console.log('1 document updated!');
+            res.json(result);
         }
     });
 
 });
 
 // This section will help you delete a record
-recordRoutes.route('/listings/recordDelete').post((req, res)=>{
+recordRoutes.route('/restaurants/delete').delete((req, res)=>{
     // Insert swipe information
     const dbConnect = dbo.getDb();
-    const restaurantQuery = {'restaurant_id': req.body.id};
 
-    dbConnect('restaurants').deleteOne(restaurantQuery, (err, result)=>{
+    const mongoObjId = new ObjectId(req.body.id); //req.params.id
+
+    //const restaurantQuery = {'restaurant_id': };
+    const restaurantQuery = {'_id': mongoObjId}; 
+    
+    dbConnect.collection('restaurant').deleteOne(restaurantQuery, (err, result)=>{
         if(err){
-            restaurantQuery.status(400).send(`Error deleting listing with id ${restaurantQuery.restaurant_id}!`);
+            res.status(400).send(`Error deleting restaurant with id ${req.body.id}!`);
         } else {
-            console.log('1 document deleted!');
+            // console.log('1 document deleted!');
+            res.json(result);
         }
     });
 });
