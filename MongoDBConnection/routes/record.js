@@ -9,7 +9,7 @@ const recordRoutes = express.Router();
 const dbo = require('../db/conn');
 
 // This section will help you get a list of all the records
-recordRoutes.route('/listings').get(async (req, res)=>{
+recordRoutes.route('/restaurants').get(async (req, res)=>{
     // Get records
     const dbConnect = dbo.getDb();
 
@@ -23,7 +23,7 @@ recordRoutes.route('/listings').get(async (req, res)=>{
 });
 
 // This section will help you create a new record
-recordRoutes.route('/listings/recordSwipe').post((req, res)=>{
+recordRoutes.route('/restaurants/recordSwipe').post((req, res)=>{
     // Insert swipe information
     const dbConnect = dbo.getDb();
     const matchDocument = {'restaurant_id' : req.body.id, 'URL': req.body.URL, 'address': req.body.address,
@@ -41,7 +41,7 @@ recordRoutes.route('/listings/recordSwipe').post((req, res)=>{
 });
 
 // This section will help you update a record by id
-recordRoutes.route('/listings/updateLike').post((req, res)=>{
+recordRoutes.route('/restaurants/updateLike').post((req, res)=>{
     // Update likes
     const dbConnect = dbo.getDb();
     const restaurantQuery = { 'id': req.body.id};
@@ -58,7 +58,7 @@ recordRoutes.route('/listings/updateLike').post((req, res)=>{
 });
 
 // This section will help you delete a record
-recordRoutes.route('/listings/recordDelete').post((req, res)=>{
+recordRoutes.route('/restaurants/recordDelete').post((req, res)=>{
     // Insert swipe information
     const dbConnect = dbo.getDb();
     const restaurantQuery = {'restaurant_id': req.body.id};
