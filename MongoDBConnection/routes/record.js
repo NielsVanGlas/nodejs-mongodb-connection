@@ -45,15 +45,13 @@ recordRoutes.route('/listings/updateLike').post((req, res)=>{
     // Update likes
     const dbConnect = dbo.getDb();
     const restaurantQuery = { 'id': req.body.id};
-    const updates = {
-        $inc: {likes: 1}
-    }; 
+    const updates = {'rating': req.body.rating    }; 
 
     dbConnect.collection('restaurants').updateOne(restaurantQuery, updates, (err, result)=>{
         if(err){
             res.status(400).send(`Error updating likes on restaurant with id ${restaurantQuery.id}!`);
         } else{
-            console.log('1 document updated');
+            console.log('1 document updated!');
         }
     });
 
